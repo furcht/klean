@@ -1,7 +1,7 @@
 # klean
 Basic bash script to delete and clean out directories via regex
 
-Usage: ./klean <directory> <regex_pattern> [options]
+Usage: ./klean $directory $regex_pattern [options]
 
 Options:
 - -l, --list       List matching files
