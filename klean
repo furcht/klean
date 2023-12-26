@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# Function to display usage information
+function display_usage {
+    echo "Usage: $0 <directory> <regex_pattern> [options]"
+    echo "Options:"
+    echo "  -l, --list       List matching files"
+    echo "  -d, --delete     Delete matching files"
+    echo "  -h, --help       Display this help message"
+    exit 1
+}
+
+# Parse command line options
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -l|--list)
+            list_files=true
+            shift
+            ;;
+        -d|--delete)
+            delete_files=true
+            shift
+            ;;
+        -h|--help)
+            display_usage
+            ;;
+        *)
+            if [ -z "$directory" ]; then
+                directory="$1"
+            elif [ -z "$regex_pattern" ]; then
+                regex_pattern="$1"
+            else
+                echo "Invalid argument: $1"
+                display_usage
+            fi
+            shift
+            ;;
+    esac
+done
+
+# Check if required arguments are provided
+if [ -z "$directory" ] || [ -z "$regex_pattern" ]; then
+    display_usage
+fi
+
+# Check if the specified directory exists
+if [ ! -d "$directory" ]; then
+    echo "Error: Directory '$directory' does not exist."
+    exit 1
+fi
+
+# Find and process files based on the regex pattern
+find "$directory" -type f | grep -E "$regex_pattern" | while read -r file; do
+    if [ "$list_files" = true ]; then
+        echo "Found: $file"
+    fi
+
+    if [ "$delete_files" = true ]; then
+        rm "$file"
+        echo "Deleted: $file"
+    fi
+done
+
+exit 0
